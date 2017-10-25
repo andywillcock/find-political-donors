@@ -14,8 +14,10 @@ def medianvals_by_zip(filepath):
             relevant_data = [ record[i] for i in [0, 10, 13, 14, 15] ]
             relevant_data.extend((relevant_data[3],1,relevant_data[3]))
             relevant_data[1] = relevant_data[1][0:5]
-            relevant_data = np.rec.array(relevant_data,dtype=records_dt)
 
-        print relevant_data
+            if relevant_data[0] == '' or len(relevant_data[1]) != 5 or relevant_data[3] == '' or relevant_data[4] != '':
+                continue
 
+
+    print records
 medianvals_by_zip(filepath)

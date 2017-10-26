@@ -1,19 +1,19 @@
 import os
 import numpy as np
 import datetime
+import sys
 
-filepath = '/Users/ATW/find-political-donors/input/itcont.txt'
-
-def medianvals_by_zip(filepath):
+def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
     """
     Opens input file of individual political contributions as a stream, reads each line of data, calculates the running median, total
     number of donations, and total donation amounts for each candidate by zipcode. Writes out a pipe separated txt file
     with each newline including the candidate ID number, zipcode, and running statistics for the corresponding input row.
 
-    :param filepath: path to data file for input
+    :param input_filepath: path to data file for input
+    :param output_filepath: path for .txt file output
     :return: output_records
     """
-    with open(filepath,'r') as f:
+    with open(input_filepath,'r') as f:
         # Define variable types of each possible column
         records_dt = np.dtype([('CMTE_ID','|S10'),('ZIP_CODE', '|S10'),('TRANS_DT','|S10'),('TRANS_AMT',np.float64),
                                ('OTHER_ID', '|S10'),('MEDIAN_AMT_BY_ZIP',np.int64),('DONATION_COUNT',np.int64),('TOTAL_AMT',np.int64)])
@@ -70,29 +70,28 @@ def medianvals_by_zip(filepath):
             output_records = np.delete(output_records, (0), axis=0)
 
             # Output output_records array to the correct folder as medianvals_by_date.txt
-            np.savetxt(os.path.dirname(os.getcwd())+'/output/medianvals_by_zip.txt',
-                       output_records, delimiter='|', fmt="%s")
+            np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
 
     # Close input data file
     f.close()
     return output_records
 
-medianvals_by_zip(filepath)
 
-def medianvals_by_date(filepath):
+def medianvals_by_date(input_filepath, output_filepath_dates):
     """
     Opens input file of individual political contributions as a stream, reads each line of data, calculates the median,
     total number of donations, and total donation amounts for each candidate by date. Writes out a pipe separated txt
     file with each newline including the candidate ID number, date, and calculated statistics for each unique date
     for a candidate
 
-    :param filepath: path to data file for input
+    :param input_ filepath: path to data file for input
+    :param output_filepath_dates: path for .txt file output
     :return: output_records: numpy array of candidate ID number, date, and calculated statistics. Each row is a unique
     date for a given candidate
     """
 
-    with open(filepath, 'r') as f:
+    with open(input_filepath, 'r') as f:
 
         # Define variable types of each possible column
         records_dt = np.dtype([('CMTE_ID', '|S10'), ('ZIP_CODE', '|S10'), ('TRANS_DT', '|S10'), ('TRANS_AMT', np.float64),
@@ -157,10 +156,14 @@ def medianvals_by_date(filepath):
         output_records = np.array(output_records,dtype = '|S10')
 
         # Output output_records array to the correct folder as medianvals_by_date.txt
-        np.savetxt(os.path.dirname(os.getcwd()) + '/output/medianvals_by_date.txt', output_records,
-                   delimiter='|', fmt="%s")
+        np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
     # Close input data file
     f.close()
 
-medianvals_by_date(filepath)
+if __name__ == '__main__':
+    input_filepath = sys.argv[0]
+    output_filepath_zipcodes = sys.argv[1]
+    output_filepath_dates = sys.argv[2]
+    medianvals_by_zip(input_filepath,output_filepath_zipcodes)
+    medianvals_by_date(input_filepath,output_filepath_dates)

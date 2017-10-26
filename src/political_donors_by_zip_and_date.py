@@ -162,8 +162,8 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
     f.close()
 
 if __name__ == '__main__':
-    input_filepath = sys.argv[0]
-    output_filepath_zipcodes = sys.argv[1]
-    output_filepath_dates = sys.argv[2]
+    input_filepath = sys.argv[1]
+    output_filepath_zipcodes = sys.argv[2]
+    output_filepath_dates = sys.argv[3]
     medianvals_by_zip(input_filepath,output_filepath_zipcodes)
     medianvals_by_date(input_filepath,output_filepath_dates)

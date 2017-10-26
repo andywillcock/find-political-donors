@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b44dd876-1850-4d18-b85c-144aaab5e0d9" name="Default" comment="">
       <change type="DELETED" beforePath="$PROJECT_DIR$/../output/README.md" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/cand_med_donations_by_zip.py" afterPath="$PROJECT_DIR$/political_donors_by_zip_and_date.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../insight_testsuite/run_tests.sh" afterPath="$PROJECT_DIR$/../insight_testsuite/run_tests.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cand_med_donations_by_zip.py" afterPath="$PROJECT_DIR$/cand_med_donations_by_zip.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../run.sh" afterPath="$PROJECT_DIR$/../run.sh" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="cand_med_donations_by_zip.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/cand_med_donations_by_zip.py">
+      <file leaf-file-name="political_donors_by_zip_and_date.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/political_donors_by_zip_and_date.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+            <state relative-caret-position="-1964">
+              <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -125,7 +126,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="src" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cand_med_donations_by_zip.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/political_donors_by_zip_and_date.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -151,9 +152,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="5" y="23" width="1436" height="788" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22423398" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22423398" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -187,7 +187,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cand_med_donations_by_zip.py">
+    <entry file="file://$PROJECT_DIR$/political_donors_by_zip_and_date.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -213,10 +213,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cand_med_donations_by_zip.py">
+    <entry file="file://$PROJECT_DIR$/political_donors_by_zip_and_date.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+        <state relative-caret-position="-1964">
+          <caret line="14" column="7" lean-forward="false" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

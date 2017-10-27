@@ -25,7 +25,7 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
         # Dictionary Structure = { CMTE_ID : {ZIP_CODE : [TRANS_AMT,TRANS_AMT], ZIP_CODE : [TRANS_AMT,TRANS_AMT]},
         # CMTE_ID : {TRANS_DT : [TRANS_AMT(s)]}, etc. }
         candidates = {}
-        for line in f.readlines():
+        for line in f:
             record = line.strip('\n').split('|')
             relevant_data = [ record[i] for i in [0, 10, 13, 14, 15] ]
             relevant_data.extend((relevant_data[3],1,relevant_data[3]))
@@ -72,9 +72,6 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
             # Output output_records array to the correct folder as medianvals_by_date.txt if output file argument is not None
             np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
-
-    # Close input data file
-    f.close()
     return output_records
 
 
@@ -104,7 +101,8 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
 
         # Read each line, split into a list using separator |, pull necessary data out, add placeholders for data
         # to be calculated, and filter zipcode data for the first 5 digits
-        for line in f.readlines():
+
+        for line in f:
             record = line.strip('\n').split('|')
             relevant_data = [record[i] for i in [0, 10, 13, 14, 15]]
             relevant_data.extend((relevant_data[3], 1, relevant_data[3]))
@@ -158,10 +156,8 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
         # Output output_records array to the correct folder as medianvals_by_date.txt
         np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
-    # Close input data file
-    f.close()
-
     return output_records
+
 
 if __name__ == '__main__':
     input_filepath = sys.argv[1]

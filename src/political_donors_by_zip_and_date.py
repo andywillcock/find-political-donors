@@ -3,7 +3,71 @@ import numpy as np
 import datetime
 import sys
 
-def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
+def extract_data(line):
+    record = line.strip('\n').split('|')
+    record_data = [record[i] for i in [0, 10, 13, 14, 15]]
+    record_data.extend((record_data[3], 1, record_data[3]))
+    record_data[1] = record_data[1][0:5]
+    return record_data
+
+def check_zip_data_requirements(line_of_data):
+    """
+    Check data for relevancy using the rules defined in the data considerations section
+            Check that CMTE_ID exists
+            Check that ZIP_CODE is the correct length and not empty
+            Check to make sure that the TRANSACTION_AMT is not empty
+            Check to make sure that OTHER_ID is empty
+            If any of these are true the row is skipped
+    :param line_of_data: relevant data extracted from line of input data file
+    :return: good_data = True if requirements are met, False if not
+    """
+    good_data = True
+    if line_of_data[0] == '' or len(line_of_data[1].strip(" ")) != 5 or line_of_data[1].strip(" ") == '' \
+            or line_of_data[3] == '' or line_of_data[4] != '':
+        good_data = False
+    return good_data
+
+def check_date_data_requirements(line_of_data):
+    """
+    Check data for relevancy using the rules defined in the data considerations section
+            Check that CMTE_ID exists
+            Check that the date is the not empty, is the correct length, and the year is not greater than the present year
+            Check to make sure that the TRANSACTION_AMT is not empty
+            Check to make sure that OTHER_ID is empty
+            If any of these are true the row is skipped
+    :param line_of_data: relevant data extracted from line of input data file
+    :return: good_data = True if requirements are met, False if not
+    """
+    now = datetime.datetime.now()
+    good_data = True
+    if line_of_data[0] == '' or line_of_data[2] == '' or len(line_of_data[2].strip(" ")) != 8 \
+        or int(line_of_data[2][-4:]) > now.year or line_of_data[3] == '' or line_of_data[4] != '':
+        good_data = False
+    return good_data
+
+def update_donations(data,donations_dictionary):
+    cmte_id = data.CMTE_ID.item()
+    zip_code = data.ZIP_CODE.item()
+    trans_amt = data.TRANS_AMT.item()
+
+    # Fill in dictionary with each unique candidate/zip code and that zip code's transaction amounts
+    if cmte_id in donations_dictionary.keys():
+
+        if zip_code in donations_dictionary[cmte_id].keys():
+            donations_dictionary[cmte_id][zip_code].append(trans_amt)
+        else:
+            donations_dictionary[cmte_id][zip_code] = [trans_amt]
+    else:
+        donations_dictionary[cmte_id] = {zip_code: [trans_amt]}
+
+    # Calculate fields of interest and store them in the proper columns of the recarray
+    data.MEDIAN_AMT_BY_ZIP = round(np.median(donations_dictionary[cmte_id][zip_code]).item(), 0)
+    data.TOTAL_AMT = np.sum(donations_dictionary[cmte_id][zip_code])
+    data.DONATION_COUNT = len(donations_dictionary[cmte_id][zip_code])
+
+    return data, donations_dictionary
+
+def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/medainval_by_zip.txt'):
     """
     Opens input file of individual political contributions as a stream, reads each line of data, calculates the running median, total
     number of donations, and total donation amounts for each candidate by zipcode. Writes out a pipe separated txt file
@@ -26,40 +90,21 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
         # CMTE_ID : {TRANS_DT : [TRANS_AMT(s)]}, etc. }
         candidates = {}
         for line in f:
-            record = line.strip('\n').split('|')
-            relevant_data = [ record[i] for i in [0, 10, 13, 14, 15] ]
-            relevant_data.extend((relevant_data[3],1,relevant_data[3]))
-            relevant_data[1] = relevant_data[1][0:5]
 
-            # Check data for relevancy using the rules defined in the data considerations section
-            # Check that CMTE_ID exists
-            # Check that ZIP_CODE is the correct length and not empty
-            # Check to make sure that the TRANSACTION_AMT is not empty
-            # Check to make sure that OTHER_ID is empty
-            # If any of these are true the row is skipped
-            if relevant_data[0] == '' \
-                    or len(relevant_data[1].strip(" ")) != 5 or relevant_data[1].strip(" ") == ''\
-                    or relevant_data[3] == '' \
-                    or relevant_data[4] != '':
+            # Extract relevant data from each line of the input file
+            relevant_data = extract_data(line)
+
+
+            data_check = check_zip_data_requirements(relevant_data)
+            if data_check == False:
                 continue
 
             # Create numpy recarray of relevant data for value easier accession
             relevant_data = np.rec.array(relevant_data,dtype=records_dt)
 
-            # Fill in dictionary with each unique candidate/zip code and that zip code's transaction amounts
-            if relevant_data.CMTE_ID.item() in candidates.keys():
-
-                if relevant_data.ZIP_CODE.item() in candidates[relevant_data.CMTE_ID.item()].keys():
-                    candidates[relevant_data.CMTE_ID.item()][relevant_data.ZIP_CODE.item()].append(relevant_data.TRANS_AMT.item())
-                else:
-                    candidates[relevant_data.CMTE_ID.item()][relevant_data.ZIP_CODE.item()] = [relevant_data.TRANS_AMT.item()]
-            else:
-                candidates[relevant_data.CMTE_ID.item()] = {relevant_data.ZIP_CODE.item():[relevant_data.TRANS_AMT.item()]}
-
-            # Calculate fields of interest and store them in the proper columns of the recarray
-            relevant_data.MEDIAN_AMT_BY_ZIP = round(np.median(candidates[relevant_data.CMTE_ID.item()][relevant_data.ZIP_CODE.item()]).item(), 0)
-            relevant_data.TOTAL_AMT = np.sum(candidates[relevant_data.CMTE_ID.item()][relevant_data.ZIP_CODE.item()])
-            relevant_data.DONATION_COUNT = len(candidates[relevant_data.CMTE_ID.item()][relevant_data.ZIP_CODE.item()])
+            # Fill in dictionary with each unique candidate/zip code and that zip code's transaction amounts and update
+            # relevant_data with appropriate calculated medians, counts, and sums.
+            relevant_data, candidates = update_donations(relevant_data,candidates)
 
             # Add this data to the records array
             records = np.vstack((records, relevant_data))
@@ -107,20 +152,11 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
             relevant_data = [record[i] for i in [0, 10, 13, 14, 15]]
             relevant_data.extend((relevant_data[3], 1, relevant_data[3]))
             relevant_data[1] = relevant_data[1][0:5]
-            now = datetime.datetime.now()
 
-            # Check data for relevancy using the rules defined in the data considerations section
-            # Check that CMTE_ID exists
-            # Check that the date is the not empty, is the correct length, and the year is not greater than the present year
-            # Check to make sure that the TRANSACTION_AMT is not empty
-            # Check to make sure that OTHER_ID is empty
-            # If any of these are true the row is skipped
-            if relevant_data[0] == '' \
-                    or relevant_data[2] == '' or len(relevant_data[2].strip(" ")) != 8 or int(relevant_data[2][-4:]) > now.year  \
-                    or relevant_data[3] == '' \
-                    or relevant_data[4] != '':
-
+            data_check = check_date_data_requirements(relevant_data)
+            if data_check == False:
                 continue
+
 
             # Create numpy recarray of relevant data for value easier accession
             relevant_data = np.rec.array(relevant_data, dtype=records_dt)

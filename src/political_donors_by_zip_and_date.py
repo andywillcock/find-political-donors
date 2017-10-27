@@ -69,7 +69,7 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes):
                                         records['DONATION_COUNT'], records['TOTAL_AMT']))
             output_records = np.delete(output_records, (0), axis=0)
 
-            # Output output_records array to the correct folder as medianvals_by_date.txt
+            # Output output_records array to the correct folder as medianvals_by_date.txt if output file argument is not None
             if output_filepath_zipcodes != None:
                 np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
@@ -156,8 +156,8 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
         # Create numpy array of all records
         output_records = np.array(output_records,dtype = '|S10')
 
-        # Output output_records array to the correct folder as medianvals_by_date.txt
-        if output_filepath_dates != None:
+        # Output output_records array to the correct folder as medianvals_by_date.txt if output file argument is not None
+        if output_filepath_dates == None:
             np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
     # Close input data file

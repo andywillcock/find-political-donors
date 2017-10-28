@@ -1,7 +1,6 @@
 import os
 import numpy as np
-import datetime
-import sys
+import argparse
 
 def extract_data(line):
     record = line.strip('\n').split('|')
@@ -103,6 +102,12 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
     return output_records
 
 if __name__ == '__main__':
-    input_filepath = sys.argv[1]
-    output_filepath_zipcodes = sys.argv[2]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file',
+                        help='filepath containing input data')
+    parser.add_argument('output_file',
+                        help='filepath to store output data')
+    args = parser.parse_args()
+    input_filepath = args.input_file
+    output_filepath_zipcodes = args.output_file
     medianvals_by_zip(input_filepath,output_filepath_zipcodes)

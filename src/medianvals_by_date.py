@@ -1,4 +1,4 @@
-import os
+import argparse
 import numpy as np
 import datetime
 import sys
@@ -96,6 +96,12 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
     return output_records
 
 if __name__ == '__main__':
-    input_filepath = sys.argv[1]
-    output_filepath_dates = sys.argv[2]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file',
+                        help='filepath containing input data')
+    parser.add_argument('output_file',
+                        help='filepath to store output data')
+    args = parser.parse_args()
+    input_filepath = args.input_file
+    output_filepath_dates = args.output_file
     medianvals_by_date(input_filepath, output_filepath_dates)

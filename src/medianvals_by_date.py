@@ -118,15 +118,15 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
             relevant_data, candidate_donations = update_donations(relevant_data, candidate_donations)
 
 
-        #Create output_array using loop. Loops thorugh each date for each candidate, creates a row for that candidate/date
-        # and then filling the row with the appropriate statistics
-        output_records = calculate_stats_by_date(candidate_donations)
+            #Create output_array using loop. Loops thorugh each date for each candidate, creates a row for that candidate/date
+            # and then filling the row with the appropriate statistics
+            output_records = calculate_stats_by_date(candidate_donations)
 
-        # Create numpy array of all records
-        output_records = np.array(output_records,dtype = '|S10')
+            # Create numpy array of all records
+            output_records = np.array(output_records,dtype = '|S10')
 
-        # Output output_records array to the correct folder as medianvals_by_date.txt
-        np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
+            # Output output_records array to the correct folder as medianvals_by_date.txt
+            np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
     return output_records
 

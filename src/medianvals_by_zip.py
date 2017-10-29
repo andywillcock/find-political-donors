@@ -111,6 +111,7 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
             # Output output_records array to the correct folder as medianvals_by_date.txt
             np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
+
     return output_records
 
 if __name__ == '__main__':

@@ -3,6 +3,11 @@ import numpy as np
 import argparse
 
 def extract_data(line):
+    """
+       Extracts neccessary data from the full line of pipe separated values in the line from the input file
+       :param line: line of pipe separated values
+       :return: record_data: list of [cmte_id, zip_code, transaction date, transaction amount, other_id]
+    """
     record = line.strip('\n').split('|')
     record_data = [record[i] for i in [0, 10, 13, 14, 15]]
     record_data.extend((record_data[3], 1, record_data[3]))
@@ -28,6 +33,13 @@ def check_zip_data_requirements(line_of_data):
 
 
 def update_donations(data,donations_dictionary):
+    """
+    Adds each line of data's
+    :param data: numpy recarry of one row of the data of interest.
+    :param donations_dictionary: dictionary with the structure {cmte_id:{zip_code:[donations]}}
+    :return: data: numpy recarray of data with new calculated columns included
+             donations_dictionary: dictionary with cmte_id's zip code updated with new donations from the input data
+    """
     cmte_id = data.CMTE_ID.item()
     zip_code = data.ZIP_CODE.item()
     trans_amt = data.TRANS_AMT.item()
@@ -73,10 +85,10 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
         candidates = {}
         for line in f:
 
-            # Extract relevant data from each line of the input file
+            # Extract relevant data from the line of data
             relevant_data = extract_data(line)
 
-
+            # Check data for formatting and other requirements
             data_check = check_zip_data_requirements(relevant_data)
             if data_check == False:
                 continue
@@ -96,12 +108,13 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
                                         records['DONATION_COUNT'], records['TOTAL_AMT']))
             output_records = np.delete(output_records, (0), axis=0)
 
-            # Output output_records array to the correct folder as medianvals_by_date.txt if output file argument is not None
+            # Output output_records array to the correct folder as medianvals_by_date.txt
             np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
     return output_records
 
 if __name__ == '__main__':
+    # Checks that the input file and output file sources are both present when running from the command line
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file',
                         help='filepath containing input data')

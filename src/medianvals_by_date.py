@@ -1,7 +1,18 @@
 import argparse
 import numpy as np
 import datetime
-import sys
+
+def extract_data(line):
+    """
+    Extracts neccessary data from the full line of pipe separated values in the line from the input file
+    :param line: line of pipe separated values
+    :return: record_data: list of [cmte_id, zip_code, transaction date, transaction amount, other_id]
+    """
+    record = line.strip('\n').split('|')
+    record_data = [record[i] for i in [0, 10, 13, 14, 15]]
+    record_data.extend((record_data[3], 1, record_data[3]))
+    record_data[1] = record_data[1][0:5]
+    return record_data
 
 def check_date_data_requirements(line_of_data):
     """
@@ -20,6 +31,50 @@ def check_date_data_requirements(line_of_data):
         or int(line_of_data[2][-4:]) > now.year or line_of_data[3] == '' or line_of_data[4] != '':
         good_data = False
     return good_data
+
+def update_donations(data,donations_dictionary):
+    """
+    Adds each line of data's donation amount to the appropriate cmte_id and date
+    :param data: numpy recarry of one row of the data of interest.
+    :param donations_dictionary: dictionary with the structure {cmte_id:{date:[donations]}}
+    :return: data: numpy recarray of data with new calculated columns included
+             donations_dictionary: dictionary with cmte_id's zip code updated with new donations from the input data
+    """
+    cmte_id = data.CMTE_ID.item()
+    date = data.TRANS_DT.item()
+    trans_amt = data.TRANS_AMT.item()
+
+    # Fill in dictionary with each unique candidate/date and that date's transaction amounts
+    if data.CMTE_ID.item() in donations_dictionary.keys():
+
+        if date in donations_dictionary[cmte_id].keys():
+            donations_dictionary[cmte_id][date].append(trans_amt)
+        else:
+            donations_dictionary[cmte_id][date] = [trans_amt]
+    else:
+        donations_dictionary[cmte_id] = {date:[trans_amt]}
+
+    return data, donations_dictionary
+
+def calculate_stats_by_date(donations_dictionary):
+    """
+    Calculates the median, total amount, and transaction count for each candidate by date and create
+    :param donations_dictionary: dictionary with format {cmte_id:{date:[donations]}}
+    :return: output records: list of lists - each being a row for a candidate and a date with the median donation
+                             amount for that date, total number of donations, and total amount of the donations
+    """
+    output_records = []
+
+    for cand in donations_dictionary.keys():
+        for key in donations_dictionary[cand].keys():
+            date = key
+            median = int(round(np.median(donations_dictionary[cand][key]).item(), 0))
+            total = int(sum(donations_dictionary[cand][key]))
+            count = len(donations_dictionary[cand][key])
+            row = [cand, date, str(median), str(count), str(total)]
+            output_records.append(row)
+    return output_records
+
 
 def medianvals_by_date(input_filepath, output_filepath_dates):
     """
@@ -43,49 +98,29 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
 
         # Read data file line by line and add relevant data to a dictionary.
         # Dictionary Structure = { CMTE_ID : {TRANS_DT : [TRANS_AMT,TRANS_AMT]}, CMTE_ID : {TRANS_DT : [TRANS_AMT(s)]}, etc. }
-        candidates = {}
+        candidate_donations = {}
 
         # Read each line, split into a list using separator |, pull necessary data out, add placeholders for data
         # to be calculated, and filter zipcode data for the first 5 digits
 
         for line in f:
-            record = line.strip('\n').split('|')
-            relevant_data = [record[i] for i in [0, 10, 13, 14, 15]]
-            relevant_data.extend((relevant_data[3], 1, relevant_data[3]))
-            relevant_data[1] = relevant_data[1][0:5]
+            # Extract relevant data from the line of data
+            relevant_data = extract_data(line)
 
+            # Check data for formatting and other requirements
             data_check = check_date_data_requirements(relevant_data)
             if data_check == False:
                 continue
 
-
             # Create numpy recarray of relevant data for value easier accession
             relevant_data = np.rec.array(relevant_data, dtype=records_dt)
 
-            # Fill in dictionary with each unique candidate/date and that date's transaction amounts
-            if relevant_data.CMTE_ID.item() in candidates.keys():
+            relevant_data, candidate_donations = update_donations(relevant_data, candidate_donations)
 
-                if relevant_data.TRANS_DT.item() in candidates[relevant_data.CMTE_ID.item()].keys():
-                    candidates[relevant_data.CMTE_ID.item()][relevant_data.TRANS_DT.item()].append(
-                        relevant_data.TRANS_AMT.item())
-                else:
-                    candidates[relevant_data.CMTE_ID.item()][relevant_data.TRANS_DT.item()] = [
-                        relevant_data.TRANS_AMT.item()]
-            else:
-                candidates[relevant_data.CMTE_ID.item()] = {
-                    relevant_data.TRANS_DT.item(): [relevant_data.TRANS_AMT.item()]}
 
         #Create output_array using loop. Loops thorugh each date for each candidate, creates a row for that candidate/date
         # and then filling the row with the appropriate statistics
-        output_records = []
-        for cand in candidates.keys():
-            for key in candidates[cand].keys():
-                date = key
-                median = int(round(np.median(candidates[cand][key]).item(),0))
-                total = int(sum(candidates[cand][key]))
-                count = len(candidates[cand][key])
-                row = [cand,date,str(median),str(count),str(total)]
-                output_records.append(row)
+        output_records = calculate_stats_by_date(candidate_donations)
 
         # Create numpy array of all records
         output_records = np.array(output_records,dtype = '|S10')
@@ -94,6 +129,7 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
         np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
     return output_records
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

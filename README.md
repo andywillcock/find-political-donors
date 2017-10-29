@@ -22,9 +22,9 @@ as a new row in the output file.
 
 #### medianvals_by_date.py
 
-The approach for medianvals_by_date was similar to medianvals_by_zip using a similarly structure dictionary, 
-{cmte_id:{transaction_date:[donation amounts]} the median value, total number of donations, and total amount of
-the donations for that cmte_id and date were calculated and one row for each cmte_id and date was written out to 
+The approach for medianvals_by_date was similar to medianvals_by_zip. Using a similarly structure dictionary - 
+{cmte_id:{transaction_date:[donation amounts]} - the median value, total number of donations, and total amount of
+the donations for that cmte_id and date is calculated and one row for each cmte_id and date was written out to 
 the output file.
 
 

@@ -85,7 +85,6 @@ function compare_outputs {
   if [ "${NUM_OUTPUT_FILES_PASSED}" -eq "2" ]; then
     PASS_CNT=$(($PASS_CNT+1))
   fi
-
 }
 
 function run_all_tests {

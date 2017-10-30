@@ -46,7 +46,7 @@ using the ~/find_political_donors/input/itcont.txt file as input and writing the
 From the command line the scripts can be run using:
 
 python ./src/medianvals_by_zip.py input_file output_file\
-or\
+**or**\
 python ./src/medianvals_by_date.py input_file output_file>\
  
 Either script can also be called without any arguments to see the usage message

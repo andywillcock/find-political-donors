@@ -115,7 +115,8 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
         for line in f:
             # Extract relevant data from the line of data
             relevant_data = extract_data(line)
-
+            if relevant_data == False:
+                continue
             # Check data for formatting and other requirements
             data_check = check_date_data_requirements(relevant_data)
             if data_check == False:

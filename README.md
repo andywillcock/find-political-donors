@@ -28,10 +28,12 @@ each time a new line of data is read. The new output table is then written out t
 #### medianvals_by_date.py
 
 The approach for medianvals_by_date was similar to medianvals_by_zip. After extracting and processing the data
-I used a similarly structure dictionary: {cmte_id:{transaction_date:[donation amounts]}. This dictionary is then sorted
-so that the CMTE_ID's are in alphabetical order and their dates are in chronological order. The median value, total number 
-of donations, and total amount of the donations for each cmte_id and date are calculated each time a new row of data is 
-read in. One row for each cmte_id and date is written out to the user-specified output file.
+I used a similarly structure dictionary: {cmte_id:{transaction_date:[donation amounts]}. Once all of the data has been 
+entered into the correct CMTE_ID key and TRANSACTION_DATE sub-key the median value, total number of donations, and total 
+amount of the donations are calculated for each unique CMTE_ID/TRANSACTION_DATE combination. This information is then 
+put into a numpy array with each row being a unique CMTE_ID/TRANSACTION_DATE combination and the required calculated 
+columns. The full array is then sorted alphabetically by CMTE_ID and chronologically by TRANSACTION_DATE. The array is 
+then written out to the user specified output file.
 
 #### Data Storage and Output
 Since the data being read in has both character and numerical data I decided to use a numpy recarray to store the data

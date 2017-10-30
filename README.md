@@ -10,7 +10,8 @@ extracted from the full line and stored for processing.
 
 After each line is read and stored I decided to perform number of checks to see if the data 
 conforms to the requirements of the problem. If any of the tests fail that line of data is ignored. 
-These requirements differ slightly for the medianval_by_zip and medianvals_by_date scripts.
+These requirements differ slightly for the medianval_by_zip and medianvals_by_date scripts. Included in the requirement
+checks for medianvals_by_date is a check to see if the date is in the future, and thus, invalid.
 
 #### medianvals_by_zip.py
 
@@ -37,7 +38,7 @@ to the necessary ouput file much more efficient.
 
 Using the run.sh from the project root directory will run both medianvals_by_zip.py and medianvals_by_date.py
 using the ~/find_political_donors/input/itcont.txt file as input and writing the results out to the
-~/find_political_donors/output folder.
+~/find_political_donors/output folder. The input file can be changed by editing the run.sh file.
 
 From the command line the scripts can be run using:
 

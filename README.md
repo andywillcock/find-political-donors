@@ -44,7 +44,7 @@ to the necessary ouput file much more efficient.
 
 Using the run.sh from the project root directory will run both medianvals_by_zip.py and medianvals_by_date.py
 using the ~/find_political_donors/input/itcont.txt file as input and writing the results out to the
-~/find_political_donors/output folder. The input file can be changed by editing the run.sh file.
+~/find_political_donors/output folder. The input/output file can be changed by editing the run.sh file.
 
 From the command line the scripts can be run using:
 

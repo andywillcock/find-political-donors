@@ -4,14 +4,18 @@ import argparse
 
 def extract_data(line):
     """
-       Extracts neccessary data from the full line of pipe separated values in the line from the input file
+       Extracts neccessary data from the full line of pipe separated values in the line from the input file, formats
+       it based on the data requirements, and appends three more items as place holders for the running median, donation
+       count, and total donation amount.
        :param line: line of pipe separated values
        :return: record_data: list of [cmte_id, zip_code, transaction date, transaction amount, other_id]
     """
     record = line.strip('\n').split('|')
+    # Extract cmte_id, zipcode, date, transaction amount, and other id from full line of data
     record_data = [record[i] for i in [0, 10, 13, 14, 15]]
     record_data.extend((record_data[3], 1, record_data[3]))
-    record_data[1] = record_data[1][0:5]
+    # Strip any spaces from the zipcode data and extract the first five numbers
+    record_data[1] = record_data[1].strip(" ")[0:5]
     return record_data
 
 def check_zip_data_requirements(line_of_data):

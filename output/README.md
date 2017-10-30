@@ -1,1 +1,1 @@
-This directory is where we would expect your program to write the requested output files.
+This directory is where running run.sh from the root directory will put any output files.

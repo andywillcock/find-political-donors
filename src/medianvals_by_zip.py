@@ -4,18 +4,23 @@ import argparse
 
 def extract_data(line):
     """
-       Extracts neccessary data from the full line of pipe separated values in the line from the input file, formats
-       it based on the data requirements, and appends three more items as place holders for the running median, donation
-       count, and total donation amount.
-       :param line: line of pipe separated values
-       :return: record_data: list of [cmte_id, zip_code, transaction date, transaction amount, other_id]
+    Checks for the proper format as described by the FEC Dictionary (21 values), extracts neccessary data from the full
+    line of pipe separated values in the line from the input file, and appends three more items as place holders for the
+    running median, donation count, and total donation amount.
+    :param line: line of pipe separated values
+    :return: record_data: list of [cmte_id, zip_code, transaction date, transaction amount, other_id]
     """
     record = line.strip('\n').split('|')
-    # Extract cmte_id, zipcode, date, transaction amount, and other id from full line of data
-    record_data = [record[i] for i in [0, 10, 13, 14, 15]]
-    record_data.extend((record_data[3], 1, record_data[3]))
-    # Strip any spaces from the zipcode data and extract the first five numbers
-    record_data[1] = record_data[1].strip(" ")[0:5]
+    # Check to see if the line of data is in the format described by the FEC data dictionary. Each line needs to have
+    # 21 pipe-separated values
+    if len(record) != 21:
+        record_data = False
+    else:
+        # Extract cmte_id, zipcode, date, transaction amount, and other id from full line of data
+        record_data = [record[i] for i in [0, 10, 13, 14, 15]]
+        record_data.extend((record_data[3], 1, record_data[3]))
+        # Strip any spaces from the zipcode data and extract the first five numbers
+        record_data[1] = record_data[1].strip(" ")[0:5]
     return record_data
 
 def check_zip_data_requirements(line_of_data):
@@ -91,7 +96,8 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
 
             # Extract relevant data from the line of data
             relevant_data = extract_data(line)
-
+            if relevant_data == False:
+                continue
             # Check data for formatting and other requirements
             data_check = check_zip_data_requirements(relevant_data)
             if data_check == False:
@@ -112,10 +118,10 @@ def medianvals_by_zip(input_filepath, output_filepath_zipcodes=os.getcwd()+'/med
                                         records['DONATION_COUNT'], records['TOTAL_AMT']))
             output_records = np.delete(output_records, (0), axis=0)
 
-            # Output output_records array to the correct folder as medianvals_by_date.txt
-            np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
+        # Output output_records array to the correct folder as medianvals_by_date.txt
+        np.savetxt(output_filepath_zipcodes,output_records, delimiter='|', fmt="%s")
 
-
+    f.close()
     return output_records
 
 if __name__ == '__main__':

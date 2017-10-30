@@ -1,6 +1,6 @@
 import argparse
 import numpy as np
-import datetime
+from datetime import datetime
 
 def extract_data(line):
     """
@@ -22,17 +22,17 @@ def check_date_data_requirements(line_of_data):
     """
     Check data for relevancy using the rules defined in the data considerations section
             Check that CMTE_ID exists
-            Check that the date is the not empty, is the correct length, and the year is not greater than the present year
+            Check that the date is the not empty, is the correct length, and the date is not in the future
             Check to make sure that the TRANSACTION_AMT is not empty
             Check to make sure that OTHER_ID is empty
             If any of these are true the row is skipped
     :param line_of_data: relevant data extracted from line of input data file
     :return: good_data = True if requirements are met, False if not
     """
-    now = datetime.datetime.now()
+    now = datetime.now()
     good_data = True
     if line_of_data[0] == '' or line_of_data[2] == '' or len(line_of_data[2].strip(" ")) != 8 \
-        or int(line_of_data[2][-4:]) > now.year or line_of_data[3] == '' or line_of_data[4] != '':
+        or datetime.strptime(line_of_data[2],'%m%d%Y') > now or line_of_data[3] == '' or line_of_data[4] != '':
         good_data = False
     return good_data
 
@@ -133,7 +133,6 @@ def medianvals_by_date(input_filepath, output_filepath_dates):
             np.savetxt(output_filepath_dates, output_records, delimiter='|', fmt="%s")
 
     return output_records
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

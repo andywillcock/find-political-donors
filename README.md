@@ -70,4 +70,5 @@ Either script can also be called without any arguments to see the usage message
 
 numpy\
 argparse\
-os
+os\
+datetime
